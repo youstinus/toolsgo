@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  example:
+    container_name: example
+    hostname: example
+    image: example:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./dist/conf:/etc/conf
+    ports:
+      - 8081:8081
+    restart: always

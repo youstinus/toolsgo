@@ -1,0 +1,15 @@
+Logger: # Logging instance configurations
+  LogLevel: "info" # Levels: github.com/sirupsen/logrus/logrus.go:25
+  LogFormatter: "json" # Logging Formatter can be "json" or "text" (json or any)
+
+HTTP: # HTTP REST API configrations
+  Enabled: true # Enabling or disabling service
+  Key: "" # if empty launches server without authentication, otherwise expects headers to have "X-Auth-Key" matching this value
+  Address: "localhost" # host url
+  Port: 8081
+  EnableCors: true # Use cors headers
+  EnableMetrics: true # enable prometheus metrics middleware. /metrics endpoint always enabled
+
+Services: # services that are used by controllers and have other services
+  ExamplesService:
+    Example: example

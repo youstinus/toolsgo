@@ -1,0 +1,190 @@
+openapi: 3.0.3
+info:
+  title: Example API
+  description: Example
+  version: 0.0.1
+servers:
+  - url: http://localhost:{port}
+    description: Local development environment.
+    variables:
+      port:
+        default: "8081"
+tags:
+  - name: examples
+paths:
+
+  #####################
+  # EXAMPLES ENPOINTS #
+  #####################
+  /examples/{exampleID}:
+    get:
+      tags:
+        - examples
+      summary: Gets one example
+      description: Returns one Example from database using given id
+      parameters:
+        - in: path
+          name: exampleID
+          schema:
+            type: integer
+          example: 70
+          required: true
+          description: ID for example to get
+      responses:
+        "200":
+          description: Example received successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Example"
+              examples:
+                example:
+                  $ref: "#/components/examples/ExampleExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - apiKeyAuth: []
+
+  #####################
+  # METRICS ENDPOINTS #
+  #####################
+
+  /metrics:
+    get:
+      tags:
+        - metrics
+      summary: Gets metrics
+      description: Returns metrics
+      responses:
+        "200":
+          description: Metrics received
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: go_goroutines 22
+        "4XX":
+          description: Bad request
+        "5XX":
+          description: Internal server error
+
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      name: X-Auth-Key
+      in: header
+  schemas:
+    Example:
+      title: Example
+      required: # used for golang code generation
+        - id
+        - example
+      type: object
+      properties:
+        id:
+          type: integer
+          x-go-name: ID
+          format: int64
+          description: ID that auto-increments.
+        example:
+          type: string
+          description: Cannot be empty.
+    ExamplePayload:
+      title: Example Payload
+      description: ExamplesPayload for sending to front-end
+      type: object
+      required:
+        - examples
+        - count
+        - limit
+        - offset
+      properties:
+        examples:
+          type: array
+          items:
+            $ref: "#/components/schemas/Example"
+        count:
+          type: integer
+          description: number of examples in current page
+        limit:
+          type: integer
+          description: limit examples in one page
+        offset:
+          type: integer
+          description: offset examples from first
+    ErrResponse:
+      title: Error Response
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status code written in words
+        code:
+          type: integer
+          description: Internal application error code
+        error:
+          type: string
+          description: Error message text from application
+
+  responses:
+    BadRequest:
+      description: Invalid data provided. Database or other error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrResponse"
+          examples:
+            error-data-malformed:
+              value:
+                status: Bad Request
+                code: 0
+                error: Provided data malformed
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrResponse"
+          examples:
+            error-unauthorized:
+              value:
+                status: Unauthorized
+                code: 0
+                error: Key not provided
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrResponse"
+          examples:
+            error-not-found:
+              value:
+                status: Not Found
+                code: 0
+                error: Resource not found
+    InternalServerError:
+      description: Internal server error. Cannot get database instance
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrResponse"
+          examples:
+            internal-server-error:
+              value:
+                status: Internal Server Error
+                code: 0
+                error: Internal server error
+
+  examples:
+    ExampleExample:
+      value:
+        id: 5
+        example: example
