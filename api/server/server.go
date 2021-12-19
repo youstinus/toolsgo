@@ -135,7 +135,7 @@ func (s *Server) configureServer(httpAddr string) {
 	}
 
 	// adds all routes to server using router.
-	s.controllers.InitExamplesRoutes(r)
+	s.controllers.InitRoutes(r)
 
 	// HTTP server
 	s.httpServer = &http.Server{

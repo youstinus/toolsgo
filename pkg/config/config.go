@@ -28,9 +28,14 @@ type ExamplesService struct {
 	Example string `yaml:"Example"`
 }
 
+// ToolsService configurations
+type ToolsService struct {
+}
+
 // Services holds info for all services
 type Services struct {
 	ExamplesService `yaml:"ExamplesService"`
+	ToolsService    `yaml:"ToolsService"`
 }
 
 // Config contains whole app configurations

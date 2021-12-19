@@ -6,12 +6,15 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/youstinus/toolsgo/api/server/router/examples"
+	"github.com/youstinus/toolsgo/api/server/router/tools"
 	"github.com/youstinus/toolsgo/pkg/services"
 	"github.com/youstinus/toolsgo/pkg/services/examples_service"
+	"github.com/youstinus/toolsgo/pkg/services/toolsservice"
 )
 
 func TestInitControllers(t *testing.T) {
 	eService := examples_service.ExamplesService{}
+	tService := toolsservice.Service{}
 
 	type args struct {
 		s services.If
@@ -23,14 +26,16 @@ func TestInitControllers(t *testing.T) {
 		want If
 	}{
 		{
-			name: "success pass through",
+			name: "Success",
 			args: args{
 				s: &services.Services{
 					ExamplesService: &eService,
+					ToolsService:    &tService,
 				},
 			},
 			want: &Controllers{
 				Controller: examples.Init(&eService),
+				Tools:      tools.Init(&tService),
 			},
 		},
 	}
@@ -44,7 +49,7 @@ func TestInitControllers(t *testing.T) {
 	}
 }
 
-func TestControllers_InitExamplesRoutes(t *testing.T) {
+func TestControllers_InitRoutes(t *testing.T) {
 	type args struct {
 		r *chi.Mux
 	}
@@ -55,19 +60,20 @@ func TestControllers_InitExamplesRoutes(t *testing.T) {
 		args args
 	}{
 		{
-			name: "success - calls all methods",
+			name: "SuccessAllMethods",
 			args: args{
 				r: chi.NewRouter(),
 			},
 			c: &Controllers{
 				Controller: &examples.Controller{},
+				Tools:      &tools.Controller{},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.c.InitExamplesRoutes(tt.args.r)
+			tt.c.InitRoutes(tt.args.r)
 		})
 	}
 }
